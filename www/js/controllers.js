@@ -22,16 +22,92 @@ angular.module('starter.controllers', [])
 })
 
 .controller('AccountCtrl', function($scope) {
+
+
+
+
+  var locale;
+  var userPosition = function(position){
+    locale = position.coords;
+    console.log(locale.latitude)
+    console.log(locale.longitude);
+
+    $scope.userLat = locale.latitude;
+    $scope.userLong = locale.longitude;
+
+
+  }
+
+  $scope.userLat;
+  $scope.userLong;
+
+  navigator.geolocation.getCurrentPosition(userPosition, error);
+
+  function error(err){
+    console.warn('ERROR(' + err.code + '): ' + err.message);
+  }
+
+
   $scope.settings = {
-    enableFriends: true
+    enableFriends: false
   };
 })
 
 .controller('FeedCtrl', function($scope, $http) {
- $http.get('https://data.ny.gov/api/views/d6yy-54nr/rows.json?accessType=DOWNLOAD').then(function(resp) {
+ $http.get("js/dairyList.json").then(function(resp) {
     console.log('Success', resp);
-    $scope.arrLotto = [];
-    $scope.lottoValues = resp.data.data;
+   var texts = resp.data.texts;
+   var farm = {farmName: "Onas Farm", county: "Bucks", city: "Ottsville"};
+
+   function Farm(farmName, county, city){
+     this.farmName = farmName;
+     this.county = county;
+     this.city = city;
+
+   }
+
+   var farms = []
+   farms.push(farm);
+   var farmName1 = null;
+   var county1 = null;
+   var city1 = null;
+
+   for(var i = 0; i < texts.length; i++){
+     if(i % 3 === 0){
+       farmName1 = texts[i].R[0]["T"];
+     }
+     if(i % 3 === 1){
+       county1 = texts[i].R[0]["T"];
+     }
+     if(i % 3 === 2){
+       city1 = texts[i].R[0]["T"];
+
+     }
+
+     if(farmName1 != null){
+       if(county1 != null){
+         if(city1 != null){
+           farms.push(new Farm(farmName1, county1, city1));
+           farmName1 = null;
+           county1 = null;
+           city1 = null;
+         }
+       }
+     }
+   }
+
+   for(var i = 0; i < farms.length; i++){
+
+     var farmStr = farms[i].farmName.replace(/%20/g, " ");
+     farms[i].farmName = farmStr;
+     var cityStr = farms[i].city.replace(/%20/g, " ");
+     farms[i].city = cityStr;
+
+     console.log(farms[i]);
+   }
+
+    $scope.dairies = farms;
+    console.log($scope.dairies.length);
 
     // For JSON responses, resp.data contains the result
   }, function(err) {

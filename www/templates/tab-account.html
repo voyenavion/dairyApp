@@ -1,8 +1,11 @@
 <ion-view view-title="Account">
   <ion-content>
     <ion-list>
+      <h1>Your Location: {{userLat}} , {{userLong}} </h1>
+    </ion-list>
+    <ion-list>
     <ion-toggle  ng-model="settings.enableFriends">
-        Enable Friends
+        Enable GPS
     </ion-toggle>
     </ion-list>
   </ion-content>
