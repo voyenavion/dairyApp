@@ -93,15 +93,7 @@ angular.module('starter.controllers', [])
        if(county1 != null){
          if(city1 != null){
            var dairyFarm = new Farm(farmName1, county1, city1, 0, 0, 0);
-           var geocoder = new google.maps.Geocoder();
-           var address = dairyFarm.city + ", PA";
 
-           geocoder.geocode({address: address}, function(results, status){
-             if (status == google.maps.GeocoderStatus.OK) {
-               dairyFarm.lat = results[0].geometry.location.lat();
-               dairyFarm.long = results[0].geometry.location.lng();
-             }
-           })
            farms.push(dairyFarm);
            farmName1 = null;
            county1 = null;
@@ -123,15 +115,15 @@ angular.module('starter.controllers', [])
 
     $scope.dairies = farms;
 
-    console.log($scope.dairies.length);
-
+    console.log($scope.dairies[1]);
+    console.log(farms.length);
     // For JSON responses, resp.data contains the result
   }, function(err) {
     console.error('ERR', err);
     // err.status will contain the status code
   })
 
-
+  console.log($scope.dairies[1]);
 
 })
 
