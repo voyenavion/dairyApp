@@ -1,12 +1,22 @@
-<ion-view view-title="Account">
+<ion-view view-title="Account" data-tap-disabled="true">
   <ion-content>
     <ion-list>
-      <h1>Your Location: {{userLat}} , {{userLong}} </h1>
+      <h1 id = "google-map">Your Location: {{userLat}} , {{userLong}} </h1>
     </ion-list>
     <ion-list>
     <ion-toggle  ng-model="settings.enableFriends">
         Enable GPS
     </ion-toggle>
     </ion-list>
+    <div>
+      <label class="item item-input">
+        <span class="input-label">Username</span>
+        <input type="text" ng-model = "searchWithin">
+      </label>
+    </div>
+    <h3>Json Feed</h3>
+    <div ng-repeat="dairy in closeDairies">{{dairy.farmName}}, {{dairy.lat}}, {{dairy.long}}</div>
+
+
   </ion-content>
 </ion-view>

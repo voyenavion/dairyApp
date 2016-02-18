@@ -49,8 +49,8 @@ angular.module('starter.services', [])
   };
 })
 
-.factory('Dairies', function(){
-
+.service('InfoShare', function(){
+  return {}
 })
 ;
 
