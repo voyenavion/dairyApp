@@ -54,19 +54,24 @@ angular.module('starter.controllers', [])
 })
 
 .controller('FeedCtrl', function($scope, $http) {
- $http.get("js/dairyList.json").then(function(resp) {
+
+  $http.get("js/dairyList.json").then(function(resp) {
     console.log('Success', resp);
    var texts = resp.data.texts;
    var farm = {farmName: "Onas Farm", county: "Bucks", city: "Ottsville"};
+   var citiesPA = zipcodes.array;
 
-   function Farm(farmName, county, city){
+
+   function Farm(farmName, county, city, lat, long, distanceFromCurrentUser){
      this.farmName = farmName;
      this.county = county;
      this.city = city;
+     this.lat = lat;
+     this.long = long;
+     this.distanceFromCurrentUser = distanceFromCurrentUser;
 
    }
-
-   var farms = []
+    var farms = []
    farms.push(farm);
    var farmName1 = null;
    var county1 = null;
@@ -87,7 +92,16 @@ angular.module('starter.controllers', [])
      if(farmName1 != null){
        if(county1 != null){
          if(city1 != null){
-           farms.push(new Farm(farmName1, county1, city1));
+           var dairyFarm = new Farm(farmName1, county1, city1, 0, 0, 0);
+           var targetCity = dairyFarm.city;
+           for(var i = 0; i < citiesPA.length; i++){
+             if(citiesPA[i].FIELD2 === targetCity){
+               dairyFarm.lat = citiesPA[i].lat;
+               dairyFarm.long = citiesPA[i].long;
+               //console.log('hello');
+             }
+           }
+           farms.push(dairyFarm);
            farmName1 = null;
            county1 = null;
            city1 = null;
@@ -107,6 +121,7 @@ angular.module('starter.controllers', [])
    }
 
     $scope.dairies = farms;
+
     console.log($scope.dairies.length);
 
     // For JSON responses, resp.data contains the result
@@ -114,4 +129,12 @@ angular.module('starter.controllers', [])
     console.error('ERR', err);
     // err.status will contain the status code
   })
-});
+
+
+
+})
+
+
+
+
+;

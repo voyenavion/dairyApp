@@ -47,4 +47,10 @@ angular.module('starter.services', [])
       return null;
     }
   };
-});
+})
+
+.factory('Dairies', function(){
+
+})
+;
+
