@@ -22,7 +22,10 @@ angular.module('starter.controllers', [])
     $scope.chat = Chats.get($stateParams.chatId);
   })
 
-  .controller('AccountCtrl', function ($scope) {
+  .controller('AccountCtrl', function ($scope, InfoShare) {
+    $scope.dairies = InfoShare.dairies;
+    $scope.nearDairies = [];
+
     var locale;
 
     ionic.Platform.ready(function () {
@@ -32,6 +35,8 @@ angular.module('starter.controllers', [])
         locale = position.coords;
         $scope.userLat = locale.latitude;
         $scope.userLong = locale.longitude;
+
+        $scope.nearDairies = findMatches();
 
 
 
@@ -47,11 +52,14 @@ angular.module('starter.controllers', [])
       }
     });
 
+    function convert2Radians (degrees) {
+      return degrees * Math.PI / 180;
+    };
 
     function calcDistanceMiles(lat1, lon1, lat2, lon2) {
       var R = 3959; // Radius of the earth in miles
-      var dLat = (lat2 - lat1);  // deg2rad below
-      var dLon = (lon2 - lon1);
+      var dLat = convert2Radians(lat2 - lat1);  //
+      var dLon = convert2Radians(lon2 - lon1);
       var a =
           Math.sin(dLat / 2) * Math.sin(dLat / 2) +
           Math.cos((lat1)) * Math.cos(lat2) *
@@ -89,85 +97,20 @@ angular.module('starter.controllers', [])
     };
   })
 
-  .controller('FeedCtrl', function ($scope, $http) {
+  .controller('FeedCtrl', function ($scope, $http, InfoShare, DairyPopulator) {
     var farms = [];
-    $scope.dairies = farms;
+    $scope.dairies = DairyPopulator;
 
+    var dairiesLength = $scope.dairies.length;
+    console.log(dairiesLength);
+    for (var i = 0; i < 10; i++) {
+      getLatLng(i);
+    }
 
-    $http.get("js/dairyList.json").then(function (resp) {
-      console.log('Success', resp);
-      var texts = resp.data.texts;
-      var citiesPA = zipcodes.array;
+    for (var i = 10; i < dairiesLength; i++) {
+      getLatLng(i);
+    }
 
-
-      function Farm(farmName, county, city, lat, long, distanceFromCurrentUser) {
-        this.farmName = farmName;
-        this.county = county;
-        this.city = city;
-        this.lat = lat;
-        this.long = long;
-        this.distanceFromCurrentUser = distanceFromCurrentUser;
-
-      }
-
-      var farmName1 = null;
-      var county1 = null;
-      var city1 = null;
-
-      for (var i = 0; i < texts.length; i++) {
-        if (i % 3 === 0) {
-          farmName1 = texts[i].R[0]["T"];
-        }
-        if (i % 3 === 1) {
-          county1 = texts[i].R[0]["T"];
-        }
-        if (i % 3 === 2) {
-          city1 = texts[i].R[0]["T"];
-
-        }
-
-        if (farmName1 != null) {
-          if (county1 != null) {
-            if (city1 != null) {
-              var dairyFarm = new Farm(farmName1, county1, city1, 0, 0, 0);
-
-              farms.push(dairyFarm);
-              farmName1 = null;
-              county1 = null;
-              city1 = null;
-            }
-          }
-        }
-      }
-
-      for (var i = 0; i < farms.length; i++) {
-
-        var farmStr = farms[i].farmName.replace(/%20/g, " ");
-        farms[i].farmName = farmStr;
-        var cityStr = farms[i].city.replace(/%20/g, " ");
-        farms[i].city = cityStr;
-
-        console.log(farms[i]);
-      }
-
-      //$scope.dairies = farms;
-      var dairiesLength = $scope.dairies.length;
-      console.log(dairiesLength);
-      for (var i = 0; i < 10; i++) {
-        getLatLng(i);
-      }
-
-      for (var i = 10; i < dairiesLength; i++) {
-        getLatLng(i);
-      }
-
-
-
-        // For JSON responses, resp.data contains the result
-    }, function (err) {
-      console.error('ERR', err);
-      // err.status will contain the status code
-    })
 
     function getLatLng(index) {
       var geocoder = new google.maps.Geocoder();

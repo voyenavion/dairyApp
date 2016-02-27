@@ -10,12 +10,12 @@
     </ion-list>
     <div>
       <label class="item item-input">
-        <span class="input-label">Username</span>
+        <span class="input-label">Search Radius</span>
         <input type="text" ng-model = "searchWithin">
       </label>
     </div>
-    <h3>Json Feed</h3>
-    <div ng-repeat="dairy in closeDairies">{{dairy.farmName}}, {{dairy.lat}}, {{dairy.long}}</div>
+    <h3>Nearby Dairies</h3>
+    <div ng-repeat="dairy in nearDairies">{{dairy.farmName}}, {{dairy.lat}}, {{dairy.long}}</div>
 
 
   </ion-content>
