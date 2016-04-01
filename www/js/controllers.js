@@ -22,34 +22,34 @@ angular.module('starter.controllers', [])
     $scope.chat = Chats.get($stateParams.chatId);
   })
 
-  .controller('AccountCtrl', function ($scope, InfoShare) {
-    $scope.dairies = InfoShare.dairies;
-    $scope.nearDairies = [];
+  .controller('AccountCtrl', function ($scope, myCache) {
+    $scope.dairies = myCache.getDairies();
 
-    var locale;
+
+
+
 
     ionic.Platform.ready(function () {
 
 
       var userPosition = function (position) {
-        locale = position.coords;
-        $scope.userLat = locale.latitude;
-        $scope.userLong = locale.longitude;
+        $scope.userLat = position.coords.latitude;
+        $scope.userLong = position.coords.longitude;
+        console.log($scope.userLat);
+        console.log($scope.userLong);
 
-        $scope.nearDairies = findMatches();
 
 
 
 
       }
-
-      $scope.userLat;
-      $scope.userLong;
-      navigator.geolocation.getCurrentPosition(userPosition, error);
 
       function error(err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
       }
+
+      navigator.geolocation.getCurrentPosition(userPosition, error);
+
     });
 
     function convert2Radians (degrees) {
@@ -67,50 +67,54 @@ angular.module('starter.controllers', [])
         ;
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       var d = R * c; // Distance in miles
-      return d;
       console.log(d);
+
+      return d;
     }
 
     $scope.searchWithin = 500;
 
-    var nearDairies = [];
-    var searchWithin = $scope.searchWithin;
 
+
+
+
+    // made a fix by declaring d and assigning it calcDistance()
     function findMatches() {
+      var nearDairies = [];
       var arrayLength = $scope.dairies;
       console.log(arrayLength);
       for (var i = 0; i < arrayLength; i++) {
         var dairy = $scope.dairies[i];
-        calcDistanceMiles(dairy.lat, dairy.long, $scope.userLat, $scope.userLong);
+        var d = calcDistanceMiles(dairy.lat, dairy.long, $scope.userLat, $scope.userLong);
         if (d <= $scope.searchWithin) {
           nearDairies.push(dairy);
         }
       }
+      console.log($scope.dairies);
+
       return nearDairies;
 
     }
 
-    console.log(findMatches())
+    $scope.nearDairies=findMatches();
 
-    $scope.settings = {
-      enableFriends: false
-    };
+
   })
 
-  .controller('FeedCtrl', function ($scope, $http, InfoShare, DairyPopulator) {
+  .controller('FeedCtrl', function ($scope, $http, myCache, DairyPopulator) {
     var farms = [];
     $scope.dairies = DairyPopulator;
 
     var dairiesLength = $scope.dairies.length;
     console.log(dairiesLength);
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < dairiesLength; i++) {
       getLatLng(i);
     }
-
-    for (var i = 10; i < dairiesLength; i++) {
+/*
+    for (var i = 0; i < dairiesLength; i++) {
       getLatLng(i);
     }
-
+*/
 
     function getLatLng(index) {
       var geocoder = new google.maps.Geocoder();
@@ -119,11 +123,14 @@ angular.module('starter.controllers', [])
         if (status == google.maps.GeocoderStatus.OK) {
           $scope.dairies[index].lat = results[0].geometry.location.lat();
           $scope.dairies[index].long = results[0].geometry.location.lng();
+
         } else {
-          console.error("didn't work this time");
+          console.error(status);
         }
       })
     }
+
+    myCache.setDairies($scope.dairies);
   })
 
 

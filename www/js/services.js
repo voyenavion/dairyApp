@@ -48,7 +48,22 @@ angular.module('starter.services', [])
     }
   };
 })
-  
+
+.factory('myCache', function() {
+  var allDairies = [];
+  return {
+    setDairies: function(dairies){
+      console.log("I am setting in controller for feed");
+      allDairies = dairies;
+
+    },
+
+    getDairies:function(){
+      console.log("I am getting in controller for account");
+      return allDairies;
+    }
+  }
+})
 
 
 .factory('DairyPopulator', function(){
