@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+      time: "13:05"
+      timezone: "US/Eastern"
+    # Raise pull requests for version updates against the `develop` branch
+    target-branch: "master"
+    open-pull-requests-limit: 1
