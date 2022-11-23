@@ -4,7 +4,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-      time: "13:05"
+      time: "13:07"
       timezone: "US/Eastern"
     # Raise pull requests for version updates against the `develop` branch
     target-branch: "master"
